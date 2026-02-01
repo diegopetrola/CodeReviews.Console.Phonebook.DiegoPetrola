@@ -1,16 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Phonebook.Context;
+using Phonebook.Controllers;
+using Phonebook.Services;
+using Phonebook.Utils;
 
 IServiceCollection services = new ServiceCollection();
 services.AddDbContext<PhonebookContext>();
-services.AddTransient<IFlashcardService, FlashcardService>();
-services.AddTransient<ICardStackService, CardStackService>();
-services.AddTransient<IStudyService, StudyService>();
-services.AddTransient<FlashcardController>();
-services.AddTransient<StackController>();
-services.AddTransient<ReportController>();
-services.AddTransient<StudyController>();
+services.AddTransient<IContactService, ContactService>();
+services.AddTransient<ContactController>();
 services.AddTransient<MainMenuController>();
 
 ServiceProvider serviceProvider = services.BuildServiceProvider();

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Phonebook": {
+      "commandName": "Project",
+      "workingDirectory": "."
+    }
+  }
+}

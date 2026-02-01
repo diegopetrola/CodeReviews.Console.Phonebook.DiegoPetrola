@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Phonebook.Models;
+using Phonebook.Entities;
+using Phonebook.Utils;
+using Spectre.Console;
 
 namespace Phonebook.Context;
 
@@ -21,21 +23,14 @@ public class PhonebookContext : DbContext
 
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         }
-        catch
+        catch (Exception e)
         {
-            throw new Exception("The appsettings.json was deleted or moved, the application can not run.");
+            AnsiConsole.MarkupLine($"[{ColorHelper.error}]The appsettings.json was deleted or moved, the application can not run![/]");
+            AnsiConsole.MarkupLine($"Cloning the repository again might solve this.\n");
+            AnsiConsole.MarkupLine($"Original error:[{ColorHelper.error}]{e.Message}[/]");
+            Shared.AskForKey();
+            Environment.Exit(0);
         }
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Contact>(entity =>
-        {
-            entity.Property(fc => fc.Name).IsRequired();
-            entity.Property(fc => fc.PhoneNumber).IsRequired();
-        });
-
     }
 }
 

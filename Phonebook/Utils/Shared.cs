@@ -6,8 +6,9 @@ namespace Phonebook.Utils;
 public static class Shared
 {
     public static readonly string addNew = $"[{ColorHelper.success}] + Add New[/]";
+    public static readonly string filter = $"[{ColorHelper.warning}] ~ Filter[/]";
     public static readonly string goBack = $"[{ColorHelper.subtle}]<- Go Back[/]";
-    public readonly static string dateFormat = "dd/MM/yy";
+    public static readonly string dateFormat = "dd/MM/yy";
 
     public static Panel GetStandardPanel(string bodyText, string header)
     {
