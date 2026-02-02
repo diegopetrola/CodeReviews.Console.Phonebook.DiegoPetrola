@@ -5,6 +5,7 @@ using Phonebook.Controllers;
 using Phonebook.Services;
 using Phonebook.Utils;
 
+
 IServiceCollection services = new ServiceCollection();
 services.AddDbContext<PhonebookContext>();
 services.AddTransient<IContactService, ContactService>();
@@ -13,7 +14,7 @@ services.AddTransient<MainMenuController>();
 
 ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-await DatabaseSeeding.CustomSeeding();
+await DatabaseSeeding.CustomSeeding(serviceProvider);
 
 var mainMenu = serviceProvider.GetService<MainMenuController>()!;
 await mainMenu.ShowMainMenu();

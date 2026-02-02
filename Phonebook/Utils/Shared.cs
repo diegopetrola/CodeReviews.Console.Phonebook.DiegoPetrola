@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Phonebook.Entities;
 using Spectre.Console;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -15,6 +16,8 @@ public static partial class Shared
     private static partial Regex FormattedPhoneRegex();
     [GeneratedRegex("[0-9]{10}")]
     private static partial Regex Lenght10Regex();
+    [GeneratedRegex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")]
+    private static partial Regex MailRegex();
 
     public static Panel GetStandardPanel(string bodyText, string header)
     {
@@ -81,5 +84,40 @@ public static partial class Shared
             return true;
 
         return false;
+    }
+
+    public static bool ValidadeEMail(string email)
+    {
+        return MailRegex().IsMatch(email);
+    }
+
+    public static string AskEmail(string defaultValue = "")
+    {
+        var mail = AnsiConsole.Prompt(
+                new TextPrompt<string>($"\"Type the new [{ColorHelper.bold}]name[/]\", contact.Name")
+                .DefaultValue(defaultValue)
+                .Validate(input => Shared.ValidadeEMail(input) ? ValidationResult.Success() :
+                    ValidationResult.Error("Invalid e-mail.")
+                )
+        );
+
+        return mail;
+    }
+
+    public static string ValidadeContact(Contact contact)
+    {
+        var errorMsg = "";
+        var phone = contact.PhoneNumber;
+        if (!ValidatePhoneNumber(phone, out phone))
+        {
+            errorMsg += "Phone number is invalid\n";
+        }
+
+        if (!ValidadeEMail(contact.Email))
+        {
+            errorMsg += "Email is invalid";
+        }
+
+        return errorMsg;
     }
 }

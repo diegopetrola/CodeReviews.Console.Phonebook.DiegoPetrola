@@ -70,7 +70,8 @@ public class ContactController(IContactService contactService)
     {
         var name = AnsiConsole.Ask<string>($"Type the new [{ColorHelper.bold}]contact name[/]:");
         var phoneNumber = Shared.AskPhoneNumber($"Type the new [{ColorHelper.bold}]phone number[/]:");
-        var contact = new Contact { PhoneNumber = phoneNumber, Name = name };
+        var email = Shared.AskEmail();
+        var contact = new Contact { PhoneNumber = phoneNumber, Name = name, Email = email };
 
         try
         {
@@ -89,6 +90,7 @@ public class ContactController(IContactService contactService)
     {
         var panel = Shared.GetStandardPanel($"""
             [{ColorHelper.subtle}]Phone:   [/]{contact.PhoneNumber}
+            [{ColorHelper.subtle}]Email:   [/]{contact.Email}
             [{ColorHelper.subtle}]Created: [/]{contact.CreatedAt:dd/MM/yyyy}
             """,
             contact.Name);
@@ -144,6 +146,7 @@ public class ContactController(IContactService contactService)
     private async Task UpdateContactScreen(Contact contact)
     {
         contact.Name = AnsiConsole.Ask($"Type the new [{ColorHelper.bold}]name[/]", contact.Name);
+        contact.Email = Shared.AskEmail(contact.Email);
         contact.PhoneNumber = Shared.AskPhoneNumber(
             $"Type the new [{ColorHelper.bold}]phone number[/] [{ColorHelper.success}]({contact.PhoneNumber})[/]",
             contact.PhoneNumber

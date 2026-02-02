@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Phonebook.Context;
 using Phonebook.Entities;
 using Phonebook.Utils;
@@ -19,6 +20,10 @@ public class ContactService(PhonebookContext phonebookContext) : IContactService
 
     public async Task AddContact(Contact contact)
     {
+        var errorMsg = Shared.ValidadeContact(contact);
+        if (!errorMsg.IsNullOrEmpty())
+            throw new ArgumentException(errorMsg);
+
         contact.CreatedAt = DateTime.Now;
         await phonebookContext.Contacts.AddAsync(contact);
         await phonebookContext.SaveChangesAsync();
@@ -30,21 +35,18 @@ public class ContactService(PhonebookContext phonebookContext) : IContactService
         phonebookContext.Contacts.Remove(c);
         await phonebookContext.SaveChangesAsync();
     }
+
     public async Task UpdateContact(Contact contact)
     {
-        var dbContact = phonebookContext.Contacts.Find(contact.Id) ?? throw new ArgumentException("Contact not found.");
-        dbContact.PhoneNumber = contact.PhoneNumber;
-        dbContact.Name = contact.Name;
+        var errorMsg = Shared.ValidadeContact(contact);
+        if (!errorMsg.IsNullOrEmpty())
+            throw new ArgumentException(errorMsg);
 
-        var phone = contact.PhoneNumber;
-        if (Shared.ValidatePhoneNumber(phone, out phone))
-        {
-            contact.PhoneNumber = phone;
-        }
-        else
-        {
-            throw new ArgumentException("Phone number is invalid");
-        }
+        var dbContact = phonebookContext.Contacts.Find(contact.Id) ?? throw new ArgumentException("Contact not found.");
+        dbContact.Name = contact.Name;
+        dbContact.Email = contact.Email;
+        dbContact.PhoneNumber = contact.PhoneNumber;
+
         phonebookContext.Contacts.Update(dbContact);
         await phonebookContext.SaveChangesAsync();
     }
