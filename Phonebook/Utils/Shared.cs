@@ -88,18 +88,19 @@ public static partial class Shared
 
     public static bool ValidadeEMail(string email)
     {
-        return MailRegex().IsMatch(email);
+        return !email.IsNullOrEmpty() && MailRegex().IsMatch(email);
     }
 
     public static string AskEmail(string defaultValue = "")
     {
-        var mail = AnsiConsole.Prompt(
-                new TextPrompt<string>($"\"Type the new [{ColorHelper.bold}]name[/]\", contact.Name")
-                .DefaultValue(defaultValue)
-                .Validate(input => Shared.ValidadeEMail(input) ? ValidationResult.Success() :
-                    ValidationResult.Error("Invalid e-mail.")
-                )
-        );
+        var prompt = new TextPrompt<string>($"Type the new [{ColorHelper.bold}]e-mail[/]")
+                        .Validate(input => ValidadeEMail(input) ?
+                            ValidationResult.Success() :
+                            ValidationResult.Error("Invalid e-mail.")
+                        );
+        if (!defaultValue.IsNullOrEmpty())
+            prompt.DefaultValue(defaultValue);
+        var mail = AnsiConsole.Prompt(prompt);
 
         return mail;
     }
